@@ -1,4 +1,4 @@
-# heroku-buildpack-git-submodule
+![heroku](http://i.imgur.com/gdl3WtA.png)
 
 This Heroku buildpack adds support for Git submodules. This allows submodules to work with Github Sync. Heroku supports submodules natively, but only through Git pushes. This works around that limitation.
 
