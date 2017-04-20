@@ -1,0 +1,57 @@
+#!/bin/bash
+
+APP_DIR="$1"
+ENV_DIR="$3"
+
+# load required environment variables
+GIT_REPO_URL=$(<"$ENV_DIR/GIT_REPO_URL")
+GIT_SSH_KEY=$(<"$ENV_DIR/GIT_SSH_KEY")
+
+if [[ -z $GIT_REPO_URL ]]; then
+    echo "Did you forget to set GIT_REPO_URL?"
+    exit 1
+fi
+
+if [[ -z $GIT_SSH_KEY ]]; then
+    echo "Did you forget to set GIT_SSH_KEY?"
+    exit 1
+fi
+
+# make sure we're in the root of the app dir
+cd "$APP_DIR"
+
+# remove existing .gitmodules, we'll check out it again
+rm .gitmodules
+
+# create an empty repo to fetch into
+git init -q
+
+# enable sparse checkouts, this will avoid checking out
+# all the files in the repo, we'll only check out .gitmodules
+git config core.sparseCheckout true
+echo ".gitmodules" > .git/info/sparse-checkout
+
+# add the repo as a remote and fetch the repo's history
+git remote add origin "$GIT_REPO_URL"
+
+# install the ssh key
+mkdir ~/.ssh
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
+cat "$ENV_DIR/GIT_SSH_KEY" > ~/.ssh/id_rsa
+
+# ignore/hide ssh warnings
+echo "Host *" >> ~/.ssh/config
+echo "   StrictHostKeyChecking no" >> ~/.ssh/config
+echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
+echo "   LogLevel ERROR" >> ~/.ssh/config
+echo "-----> Installed SSH key from GIT_SSH_KEY"
+
+# checkout the revision that's being deployed
+git fetch -q --depth 1 origin -a > /dev/null
+git checkout -q $SOURCE_VERSION > /dev/null
+echo "-----> Fetched shallow history from $GIT_REPO_URL"
+
+# initialize all the submodules
+git submodule -q update --init --recursive
+echo "-----> Checked out all submodules"
+git submodule status | sed 's/^/       * /'

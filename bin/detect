@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [[ ! -f ".gitmodules" ]]; then
+    exit 1
+fi
+
+echo "Git submodules"
+exit 0
