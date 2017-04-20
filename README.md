@@ -1,4 +1,4 @@
-![license](https://camo.githubusercontent.com/7564c4f51086d05c91ab09865b0ab1eaf457f172/68747470733a2f2f696d672e736869656c64732e696f2f3a6c6963656e73652d6d69742d626c75652e737667)
+![license](https://camo.githubusercontent.com/7564c4f51086d05c91ab09865b0ab1eaf457f172/68747470733a2f2f696d672e736869656c64732e696f2f3a6c6963656e73652d6d69742d626c75652e737667) ![heroku stack](https://img.shields.io/badge/heroku%20stack-cedar14-green.svg)
 
 ![heroku](http://i.imgur.com/gdl3WtA.png)
 
