@@ -48,7 +48,7 @@ echo "-----> Installed SSH key from GIT_SSH_KEY"
 
 # checkout the revision that's being deployed
 git fetch -q --depth 1 origin -a > /dev/null
-git checkout -q $SOURCE_VERSION > /dev/null
+git checkout -q ${SOURCE_VERSION:-master} > /dev/null
 echo "-----> Fetched shallow history from $GIT_REPO_URL"
 
 # initialize all the submodules
