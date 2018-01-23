@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [[ ! -f ".gitmodules" ]]; then
     exit 1
