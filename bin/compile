@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 APP_DIR="$1"
 ENV_DIR="$3"
