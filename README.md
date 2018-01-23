@@ -15,7 +15,7 @@ This buildpack takes a different approach and makes using the native Git way of 
 
         heroku buildpacks:add https://github.com/SectorLabs/heroku-buildpack-git-submodule.git
         
-        Keep in mind that the buildpack order is important. If you'll specify this buildpack after your default one (e.g. `heroku/nodejs`) it'll not work. See [https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app) for details.
+    Keep in mind that the buildpack order is important. If you'll specify this buildpack after your default one (e.g. `heroku/nodejs`) it'll not work. See [https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app) for details.
 
 2. Set the `GIT_REPO_URL` to the SSH URL of your Git repo:
 
