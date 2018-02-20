@@ -5,15 +5,21 @@ ENV_DIR="$3"
 
 # load required environment variables
 GIT_REPO_URL=$(<"$ENV_DIR/GIT_REPO_URL")
-GIT_SSH_KEY=$(<"$ENV_DIR/GIT_SSH_KEY")
+GIT_REPO_DEPLOY_KEY=$(<"$ENV_DIR/GIT_REPO_DEPLOY_KEY")
+GIT_SUBMODULE_DEPLOY_KEY=$(<"$ENV_DIR/GIT_SUBMODULE_DEPLOY_KEY")
 
 if [[ -z $GIT_REPO_URL ]]; then
     echo "Did you forget to set GIT_REPO_URL?"
     exit 1
 fi
 
-if [[ -z $GIT_SSH_KEY ]]; then
-    echo "Did you forget to set GIT_SSH_KEY?"
+if [[ -z $GIT_REPO_DEPLOY_KEY ]]; then
+    echo "Did you forget to set GIT_REPO_DEPLOY_KEY?"
+    exit 1
+fi
+
+if [[ -z $GIT_SUBMODULE_DEPLOY_KEY ]]; then
+    echo "Did you forget to set GIT_SUBMODULE_DEPLOY_KEY?"
     exit 1
 fi
 
@@ -37,22 +43,33 @@ git remote add origin "$GIT_REPO_URL"
 # install the ssh key
 mkdir -p ~/.ssh
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
-cat "$ENV_DIR/GIT_SSH_KEY" > ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
+cat "$ENV_DIR/GIT_REPO_DEPLOY_KEY" > ~/.ssh/repo_deploy_key
+chmod 600 ~/.ssh/repo_deploy_key
+cat "$ENV_DIR/GIT_SUBMODULE_DEPLOY_KEY" > ~/.ssh/submodule_deploy_key
+chmod 600 ~/.ssh/submodule_deploy_key
 
 # ignore/hide ssh warnings
-echo "Host *" >> ~/.ssh/config
+# add deploy keys to ssh config
+echo "Host git-repo *" >> ~/.ssh/config
 echo "   StrictHostKeyChecking no" >> ~/.ssh/config
 echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
+echo "   IdentityFile ~/.ssh/repo_deploy_key" >> ~/.ssh/config
 echo "   LogLevel ERROR" >> ~/.ssh/config
-echo "-----> Installed SSH key from GIT_SSH_KEY"
+echo "" >> ~/.ssh/config
+echo "-----> Installed SSH key from GIT_REPO_DEPLOY_KEY"
+echo "Host git-submodule *" >> ~/.ssh/config
+echo "   StrictHostKeyChecking no" >> ~/.ssh/config
+echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
+echo "   IdentityFile ~/.ssh/submodule_deploy_key" >> ~/.ssh/config
+echo "   LogLevel ERROR" >> ~/.ssh/config
+echo "-----> Installed SSH key from GIT_SUBMODULE_DEPLOY_KEY"
 
 # checkout the revision that's being deployed
 git fetch -q --depth 1 origin -a > /dev/null
 git checkout -q ${SOURCE_VERSION:-master} > /dev/null
 echo "-----> Fetched shallow history from $GIT_REPO_URL"
 
-# initialize all the submodules
+# initialize the submodule
 git submodule -q update --init --recursive
-echo "-----> Checked out all submodules"
+echo "-----> Checked out submodule"
 git submodule status | sed 's/^/       * /'
