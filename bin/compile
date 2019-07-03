@@ -13,8 +13,7 @@ if [[ -z $GIT_REPO_URL ]]; then
 fi
 
 if [[ -z $GIT_SSH_KEY ]]; then
-    echo "Did you forget to set GIT_SSH_KEY?"
-    exit 1
+    echo "-----> Proceeding without SSH key. Set the GIT_SSH_KEY variable to use this buildpack for private repositories."
 fi
 
 # make sure we're in the root of the app dir
@@ -35,18 +34,20 @@ echo ".gitmodules" > .git/info/sparse-checkout
 git remote add origin "$GIT_REPO_URL"
 
 # install the ssh key
-mkdir -p ~/.ssh
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
-cp "$ENV_DIR/GIT_SSH_KEY" ~/.ssh/id_rsa
-echo >> ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
+if [[ ! -z $GIT_SSH_KEY ]]; then
+    mkdir -p ~/.ssh
+    ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
+    cp "$ENV_DIR/GIT_SSH_KEY" ~/.ssh/id_rsa
+    echo >> ~/.ssh/id_rsa
+    chmod 600 ~/.ssh/id_rsa
 
-# ignore/hide ssh warnings
-echo "Host *" >> ~/.ssh/config
-echo "   StrictHostKeyChecking no" >> ~/.ssh/config
-echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
-echo "   LogLevel ERROR" >> ~/.ssh/config
-echo "-----> Installed SSH key from GIT_SSH_KEY"
+    # ignore/hide ssh warnings
+    echo "Host *" >> ~/.ssh/config
+    echo "   StrictHostKeyChecking no" >> ~/.ssh/config
+    echo "   UserKnownHostsFile /dev/null" >> ~/.ssh/config
+    echo "   LogLevel ERROR" >> ~/.ssh/config
+    echo "-----> Installed SSH key from GIT_SSH_KEY"
+fi
 
 # checkout the revision that's being deployed
 git fetch -q --depth 1 origin -a > /dev/null
