@@ -13,8 +13,7 @@ if [[ -z $GIT_REPO_URL ]]; then
 fi
 
 if [[ -z $GIT_SSH_KEY ]]; then
-    echo "Proceeding without SSH key. Set the GIT_SSH_KEY variable to use this buildpack for private repositories."
-    exit 1
+    echo "-----> Proceeding without SSH key. Set the GIT_SSH_KEY variable to use this buildpack for private repositories."
 fi
 
 # make sure we're in the root of the app dir
