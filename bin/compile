@@ -35,7 +35,7 @@ echo ".gitmodules" > .git/info/sparse-checkout
 git remote add origin "$GIT_REPO_URL"
 
 # install the ssh key
-if [[ -z $GIT_SSH_KEY ]]; then
+if [[ ! -z $GIT_SSH_KEY ]]; then
     mkdir -p ~/.ssh
     ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2> /dev/null
     cp "$ENV_DIR/GIT_SSH_KEY" ~/.ssh/id_rsa
