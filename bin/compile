@@ -9,6 +9,8 @@ GIT_SSH_KEY=$(<"$ENV_DIR/GIT_SSH_KEY")
 SOURCE_VERSION=$(<"$ENV_DIR/SOURCE_VERSION")
 CI=$(<"$ENV_DIR/CI")
 HEROKU_TEST_RUN_BRANCH=$(<"$ENV_DIR/HEROKU_TEST_RUN_BRANCH")
+echo "listing ENV_DIR"
+ls -lah $ENV_DIR
 
 if [[ -z $GIT_REPO_URL ]]; then
     echo "Did you forget to set GIT_REPO_URL?"
