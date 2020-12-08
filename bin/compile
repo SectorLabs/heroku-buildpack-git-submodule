@@ -9,6 +9,7 @@ GIT_SSH_KEY=$(<"$ENV_DIR/GIT_SSH_KEY")
 SOURCE_VERSION=$(<"$ENV_DIR/SOURCE_VERSION")
 CI=$(<"$ENV_DIR/CI")
 HEROKU_TEST_RUN_BRANCH=$(<"$ENV_DIR/HEROKU_TEST_RUN_BRANCH")
+HEROKU_BRANCH=$(<"$ENV_DIR/HEROKU_BRANCH")
 echo "listing ENV_DIR"
 ls -lah $ENV_DIR
 
@@ -58,8 +59,13 @@ git fetch -q --depth 1 origin -a > /dev/null
 if [ $CI ]
 then
     git checkout -q ${HEROKU_TEST_RUN_BRANCH:-master} > /dev/null
-else 
-    git checkout -q ${SOURCE_VERSION:-master} > /dev/null
+else
+    if [ $HEROKU_BRANCH ]
+    then
+        git checkout -q ${HEROKU_BRANCH:-master} > /dev/null
+    else
+        git checkout -q ${SOURCE_VERSION:-master} > /dev/null
+    fi
 fi
 echo "-----> Fetched shallow history from $GIT_REPO_URL"
 
