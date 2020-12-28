@@ -6,6 +6,10 @@ ENV_DIR="$3"
 # load required environment variables
 GIT_REPO_URL=$(<"$ENV_DIR/GIT_REPO_URL")
 GIT_SSH_KEY=$(<"$ENV_DIR/GIT_SSH_KEY")
+SOURCE_VERSION=$(<"$ENV_DIR/SOURCE_VERSION")
+CI=$(<"$ENV_DIR/CI")
+HEROKU_TEST_RUN_BRANCH=$(<"$ENV_DIR/HEROKU_TEST_RUN_BRANCH")
+HEROKU_BRANCH=$(<"$ENV_DIR/HEROKU_BRANCH")
 
 if [[ -z $GIT_REPO_URL ]]; then
     echo "Did you forget to set GIT_REPO_URL?"
@@ -50,7 +54,17 @@ echo "-----> Installed SSH key from GIT_SSH_KEY"
 
 # checkout the revision that's being deployed
 git fetch -q --depth 1 origin -a > /dev/null
-git checkout -q ${SOURCE_VERSION:-master} > /dev/null
+if [ $CI ]
+then
+    git checkout -q ${HEROKU_TEST_RUN_BRANCH:-master} > /dev/null
+else
+    if [ $HEROKU_BRANCH ]
+    then
+        git checkout -q ${HEROKU_BRANCH:-master} > /dev/null
+    else
+        git checkout -q ${SOURCE_VERSION:-master} > /dev/null
+    fi
+fi
 echo "-----> Fetched shallow history from $GIT_REPO_URL"
 
 # initialize all the submodules
