@@ -57,3 +57,6 @@ echo "-----> Fetched shallow history from $GIT_REPO_URL"
 git submodule -q update --init --recursive
 echo "-----> Checked out all submodules"
 git submodule status | sed 's/^/       * /'
+
+echo "-----> Removing .git directory"
+rm -rf .git
